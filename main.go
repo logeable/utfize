@@ -47,6 +47,9 @@ func init() {
 	flag.StringVar(&sourceFile, "sf", "", "source file")
 	flag.BoolVar(&verbose, "v", false, "verbose")
 	flag.Parse()
+
+	srcDir, _ = filepath.Abs(srcDir)
+	dstDir, _ = filepath.Abs(dstDir)
 }
 
 func main() {
