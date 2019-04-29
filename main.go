@@ -109,15 +109,23 @@ func transDir() error {
 			return os.MkdirAll(newPath, info.Mode())
 		}
 
-		bs, err := ioutil.ReadFile(path)
-		if err != nil {
-			return err
-		}
-		data, err := transformToUtf8(bs, enc)
-		if err != nil {
-			return err
-		}
-		return ioutil.WriteFile(newPath, data, 0666)
+		go func() {
+			bs, err := ioutil.ReadFile(path)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			data, err := transformToUtf8(bs, enc)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			err = ioutil.WriteFile(newPath, data, 0666)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}()
+		return nil
 	})
 }
 
