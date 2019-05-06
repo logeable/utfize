@@ -1,4 +1,4 @@
-# utfize
+# utfize [![Build Status](https://www.travis-ci.org/logeable/utfize.svg?branch=master)](https://www.travis-ci.org/logeable/utfize)
 
 ### transform source to utf8 format
 
