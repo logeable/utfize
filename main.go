@@ -4,15 +4,17 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"golang.org/x/text/encoding"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"golang.org/x/text/encoding/unicode"
-	"golang.org/x/text/transform"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+
+	"golang.org/x/text/encoding"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 var (
@@ -102,6 +104,8 @@ func transDir() error {
 		return fmt.Errorf("invalid encoding: %s", enc)
 	}
 
+	var wg sync.WaitGroup
+	defer wg.Wait()
 	return filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
 		verboseOutput(path)
 		newPath := strings.Replace(path, srcDir, dstDir, 1)
@@ -109,7 +113,9 @@ func transDir() error {
 			return os.MkdirAll(newPath, info.Mode())
 		}
 
+		wg.Add(1)
 		go func() {
+			defer wg.Done()
 			bs, err := ioutil.ReadFile(path)
 			if err != nil {
 				fmt.Println(err)
