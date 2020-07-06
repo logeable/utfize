@@ -134,14 +134,16 @@ func transDir() error {
 				fmt.Printf("precheck utf8 failed: %v\n", err)
 				return
 			}
+			var data []byte
 			if bytes.Equal(ubs, bs) {
 				fmt.Printf("ignore utf8 file: %v\n", path)
-				return
-			}
-			data, err := transformToUtf8(bs, enc)
-			if err != nil {
-				fmt.Println(err)
-				return
+				data = bs
+			} else {
+				data, err = transformToUtf8(bs, enc)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
 			}
 			err = ioutil.WriteFile(newPath, data, 0666)
 			if err != nil {
