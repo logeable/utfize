@@ -77,6 +77,14 @@ func transFile() error {
 	if !ok {
 		return fmt.Errorf("invalid encoding: %s", sourceEncoding)
 	}
+	ubs, err := transformToUtf8(bs, encodingMap["UTF8"])
+	if err != nil {
+		return fmt.Errorf("precheck utf8 failed: %v", err)
+	}
+	if bytes.Equal(ubs, bs) {
+		fmt.Printf("ignore utf8 file: %v\n", sourceFile)
+		return nil
+	}
 	data, err := transformToUtf8(bs, enc)
 	if err != nil {
 		return err
@@ -119,6 +127,15 @@ func transDir() error {
 			bs, err := ioutil.ReadFile(path)
 			if err != nil {
 				fmt.Println(err)
+				return
+			}
+			ubs, err := transformToUtf8(bs, encodingMap["UTF8"])
+			if err != nil {
+				fmt.Printf("precheck utf8 failed: %v\n", err)
+				return
+			}
+			if bytes.Equal(ubs, bs) {
+				fmt.Printf("ignore utf8 file: %v\n", path)
 				return
 			}
 			data, err := transformToUtf8(bs, enc)
